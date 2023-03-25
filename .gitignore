@@ -1,0 +1,6 @@
+.*
+figure/*
+**/*.pyc
+.idea/*
+.env
+.ipynb_checkpoints
