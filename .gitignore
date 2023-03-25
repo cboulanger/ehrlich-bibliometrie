@@ -3,4 +3,5 @@ figure/*
 **/*.pyc
 .idea/*
 .env
+.jovianrc
 .ipynb_checkpoints
