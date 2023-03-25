@@ -4,12 +4,11 @@ from IPython.display import IFrame
 import json
 import uuid
 
-def vis_network(nodes, edges, physics=False):
+def vis_network(nodes, edges, physics=False, node_size=25, font_size=14):
     html = """
     <html>
     <head>
-      <script type="text/javascript" src="../lib/vis/dist/vis.js"></script>
-      <link href="../lib/vis/dist/vis.css" rel="stylesheet" type="text/css">
+      <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     </head>
     <body>
 
@@ -25,9 +24,9 @@ def vis_network(nodes, edges, physics=False):
       const options = {{
           nodes: {{
               shape: 'dot',
-              size: 25,
+              size: {node_size},
               font: {{
-                  size: 14
+                  size: {font_size}
               }}
           }},
           edges: {{
@@ -60,10 +59,14 @@ def vis_network(nodes, edges, physics=False):
     """
 
     unique_id = str(uuid.uuid4())
-    html = html.format(id=unique_id, nodes=json.dumps(nodes), edges=json.dumps(edges), physics=json.dumps(physics))
+    html = html.format(id=unique_id,
+                       nodes=json.dumps(nodes),
+                       edges=json.dumps(edges),
+                       physics=json.dumps(physics),
+                       node_size=node_size,
+                       font_size=font_size)
 
     filename = f"figure/graph-{unique_id}.html"
-
     file = open(filename, "w")
     file.write(html)
     file.close()
@@ -82,16 +85,19 @@ def draw(graph, query, options, physics=False):
         node_label = list(node.labels)[0]
         prop_key = options.get(node_label)
         if prop_key is dict:
-            vis_label = prop_key['label']
-            vis_title = prop_key['title']
+            vis_label = node[prop_key['label'] if 'label' in prop_key else 'label']
+            vis_title = node[prop_key['title'] if 'title' in prop_key else 'title']
+            vis_value = node[prop_key['value'] if 'value' in prop_key else 'value']
         else:
             vis_label = vis_title = node[prop_key]
+            vis_value = 1
 
         return {"id": id,
                 "label": vis_label,
                 "group": node_label,
                 "title": vis_title,
-                "url": node['url']}
+                "value": vis_value,
+                "url":   node['url']}
 
     for row in data:
         source_node = row['source_node']
@@ -113,7 +119,7 @@ def draw(graph, query, options, physics=False):
 
             rel_type = type(rel).__name__
             if rel_type in options:
-                label = rel[options.get(rel_type)]
+                label = str(rel[options.get(rel_type)])
             else:
                 label = rel_type
 
@@ -122,4 +128,6 @@ def draw(graph, query, options, physics=False):
                           "value": rel['value'],
                           "label": label})
 
-    return vis_network(nodes, edges, physics=physics)
+    font_size = options.get('font_size') or 14
+    node_size = options.get('node_size') or 20
+    return vis_network(nodes, edges, physics=physics, font_size=font_size, node_size=node_size)
