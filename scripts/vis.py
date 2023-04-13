@@ -74,7 +74,10 @@ def vis_network(nodes, edges, physics=False, node_size=25, font_size=14):
     return IFrame(filename, width="100%", height="400")
 
 
-def draw(graph, query, options, physics=False):
+def draw(graph, query, options, physics=False, db=None):
+
+    if db is not None:
+        query = f"use `{db}` {query}"
 
     data = graph.run(query).data()
 
@@ -131,3 +134,8 @@ def draw(graph, query, options, physics=False):
     font_size = options.get('font_size') or 14
     node_size = options.get('node_size') or 20
     return vis_network(nodes, edges, physics=physics, font_size=font_size, node_size=node_size)
+
+def table(graph, query, db=None):
+    if db is not None:
+        query = f"use `{db}` {query}"
+    return graph.run(query).to_data_frame()
