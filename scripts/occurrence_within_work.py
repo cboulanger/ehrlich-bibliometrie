@@ -6,7 +6,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import mplcursors
-from tqdm.notebook import tqdm
+
+# Function to extract the year from the book title
+def extract_year(title):
+    year = re.search(r'\((\d{4})\)', title)
+    return int(year.group(1)) if year else None
 
 def plot_occurrences(corpus_dir, regex_list):
 
@@ -29,11 +33,6 @@ def plot_occurrences(corpus_dir, regex_list):
         for text in books_df['text']:
             regex_occurrences.append([m.start() / len(text) for m in re.finditer(regex, text)])
         occurrences[regex] = regex_occurrences
-
-    # Function to extract the year from the book title
-    def extract_year(title):
-        year = re.search(r'\((\d{4})\)', title)
-        return int(year.group(1)) if year else None
 
     # Extract years from book titles and sort the books by year
     books_df['year'] = books_df['book_title'].apply(extract_year)
