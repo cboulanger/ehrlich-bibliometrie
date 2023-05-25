@@ -1,6 +1,6 @@
 # code adapted from https://github.com/nicolewhite/neo4j-jupyter/blob/master/scripts/vis.py
 
-from IPython.display import IFrame
+from IPython.display import IFrame, display, HTML
 import json
 import uuid
 
@@ -65,13 +65,14 @@ def vis_network(nodes, edges, physics=False, node_size=25, font_size=14):
                        physics=json.dumps(physics),
                        node_size=node_size,
                        font_size=font_size)
+    return display(HTML(html))
 
-    filename = f"figure/graph-{unique_id}.html"
-    file = open(filename, "w")
-    file.write(html)
-    file.close()
-
-    return IFrame(filename, width="100%", height="400")
+    # filename = f"figure/graph-{unique_id}.html"
+    # file = open(filename, "w")
+    # file.write(html)
+    # file.close()
+    #
+    # return IFrame(filename, width="100%", height="400")
 
 
 def draw(graph, query, options, physics=False, db=None):
