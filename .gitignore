@@ -5,3 +5,4 @@ figure/*
 .jovianrc
 .ipynb_checkpoints
 cache/*
+__pycache__
