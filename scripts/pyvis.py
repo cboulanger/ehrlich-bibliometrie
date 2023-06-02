@@ -15,7 +15,7 @@ def py2neo_to_pyvis(net: Network, obj: Union[Path, Node, Relationship]):
         end_node = obj.end_node
         py2neo_to_pyvis(net, start_node)
         py2neo_to_pyvis(net, end_node)
-        net.add_edge(start_node.identity, end_node.identity)
+        net.add_edge(start_node.identity, end_node.identity, value = obj['value'], title=obj['title'])
 
 
 def draw(graph: Graph, query: str, height: str = "300px", file=None, do_display=True, **kwargs):
@@ -35,4 +35,4 @@ def draw(graph: Graph, query: str, height: str = "300px", file=None, do_display=
     if do_display:
         display(HTML(html))
 
-#%%
+

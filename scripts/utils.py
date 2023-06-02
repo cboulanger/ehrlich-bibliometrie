@@ -5,6 +5,11 @@ import requests
 import os
 import re
 import csv
+from dotenv import dotenv_values
+from py2neo import Graph
+def get_graph(db):
+    config = {**dotenv_values()}
+    return Graph(config['NEO4J_URL'], name=db)
 
 class DOICache:
     def __init__(self, file_path):
