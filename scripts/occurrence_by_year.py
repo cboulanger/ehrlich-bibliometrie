@@ -6,9 +6,21 @@ import matplotlib.ticker as ticker
 import matplotlib.pyplot as plt
 from scripts.utils import truncate
 
-def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None):
+def save_occurrences(articles_df, regex_list, file):
+    # create a copy of the dataframe
+    df = articles_df[['author','year','title','doi']]
     # Find the occurrences of each regex in the text files
-    occurrences = {}
+    for regex in regex_list:
+        regex_occurrences = []
+        for text in articles_df['text']:
+            regex_occurrences.append(len(re.findall(regex, text)))
+        df[regex] = regex_occurrences
+    df = df[~(df[regex_list] == 0).all(axis=1)]
+    df.to_excel(file, index=False)
+
+def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None):
+
+    # Find the occurrences of each regex in the text files
     for regex in regex_list:
         regex_occurrences = []
         for text in articles_df['text']:
@@ -27,6 +39,9 @@ def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None):
     if last_year is not None:
         top_articles = top_articles.loc[top_articles['year'] <= last_year]
     top_articles = top_articles.reset_index(drop=True)
+
+
+
     years = grouped_occurrences.index
     n_years = len(years)
     bar_width = 0.8 / len(regex_list)
