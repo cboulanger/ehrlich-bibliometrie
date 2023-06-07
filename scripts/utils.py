@@ -100,7 +100,7 @@ def extract_metadata_from_filename(input_string):
 def truncate(s, x):
     return s[:x] + '...' if len(s) > x else s
 
-def create_corpus(corpus_dir, doi_cache : DOICache=None):
+def create_corpus(corpus_dir, doi_cache : DOICache=None) -> pd.DataFrame:
     articles = []
     for filename in tqdm(os.listdir(corpus_dir), desc="Analyzing article corpus"):
         file_path = os.path.join(corpus_dir, filename)
@@ -140,4 +140,3 @@ def create_corpus(corpus_dir, doi_cache : DOICache=None):
                         'author': author
                     })
     return pd.DataFrame(articles).sort_values(by='year').astype({'year':'Int64'})
-#%%
