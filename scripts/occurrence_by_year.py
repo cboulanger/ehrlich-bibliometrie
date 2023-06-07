@@ -4,8 +4,7 @@ import re
 import numpy as np
 import matplotlib.ticker as ticker
 import matplotlib.pyplot as plt
-
-from utils import truncate
+from scripts.utils import truncate
 
 def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None):
     # Find the occurrences of each regex in the text files

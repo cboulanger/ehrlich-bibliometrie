@@ -5,15 +5,15 @@ import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import mplcursors
+from scripts.utils import get_corpus_dir
 
 # Function to extract the year from the book title
 def extract_year(title):
     year = re.search(r'\((\d{4})\)', title)
     return int(year.group(1)) if year else None
 
-def plot_occurrences(corpus_dir, regex_list):
-
+def create_corpus(name) -> pd.DataFrame:
+    corpus_dir = get_corpus_dir(name)
     # Read the text files and store them in a DataFrame
     book_data = []
 
@@ -23,30 +23,32 @@ def plot_occurrences(corpus_dir, regex_list):
                 text = f.read()
                 book_data.append({'book_title': os.path.splitext(file)[0], 'text': text})
 
-    books_df = pd.DataFrame(book_data)
+    return pd.DataFrame(book_data)
+
+def plot_occurrences(corpus: pd.DataFrame, regex_list):
+
+    # Extract years from book titles and sort the books by year
+    corpus['year'] = corpus['book_title'].apply(extract_year)
+    corpus = corpus.sort_values(by='year', ascending=True).reset_index(drop=True)
 
     # Count the occurrences of each ngram in the books
     occurrences = {}
-
     for regex in regex_list:
         regex_occurrences = []
-        for text in books_df['text']:
-            regex_occurrences.append([m.start() / len(text) for m in re.finditer(regex, text)])
+        for text in corpus['text']:
+            matches = [m for m in re.finditer(regex, text)]
+            regex_occurrences.append([m.start() / len(text) for m in matches])
         occurrences[regex] = regex_occurrences
 
-    # Extract years from book titles and sort the books by year
-    books_df['year'] = books_df['book_title'].apply(extract_year)
-    books_df = books_df.sort_values(by='year', ascending=False).reset_index(drop=True)
-
     # Create an array of ones to span the whole x-axis
-    book_normalized_lengths = [1] * len(books_df)
+    book_normalized_lengths = [1] * len(corpus)
 
     marker_shapes = ['o', 's', '^']  # dot, square, triangle (add more shapes as needed)
     marker_colors = ['red', 'blue', 'green']  # add more colors as needed
 
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(16, 5), gridspec_kw={'width_ratios': [4, 1]})
 
-    y = range(len(books_df))
+    y = range(len(corpus))
 
     ax1.barh(y, book_normalized_lengths, color='lightgray', edgecolor='black', linewidth=1)
 
@@ -54,27 +56,13 @@ def plot_occurrences(corpus_dir, regex_list):
         for i, positions in enumerate(counts):
             x_positions = [pos * book_normalized_lengths[i] for pos in positions]
             ax1.scatter(x_positions, [i] * len(x_positions), marker=shape, label=regex, color=color, edgecolors=color, s=50)
-            #ax1.annotate("context", (i, x_positions, [i] * len(x_positions)), textcoords="offset points", xytext=(-20, 0), ha='center', fontsize=8, visible=False)
 
     ax1.set_yticks(y)
-    ax1.set_yticklabels(books_df['book_title'])
+    ax1.set_yticklabels(corpus['book_title'])
     ax1.set_xlabel('Normalized text length')
     ax1.set_ylabel('Books (sorted by year)')
     ax1.grid(axis='x')
-
-    # # Enable mplcursors for hover interactivity
-    # cursor = mplcursors.cursor(ax1, hover=True)
-    #
-    # # Display context when hovering over the marker
-    # @cursor.connect("add")
-    # def on_add(sel):
-    #     sel.annotation.set_visible(True)
-    #     sel.annotation.draggable()
-    #     sel.annotation.set_text(sel.annotation)
-    #
-    # @cursor.connect("remove")
-    # def on_remove(sel):
-    #     sel.annotation.set_visible(False)
+    ax1.invert_yaxis()
 
     # Create a custom legend
     legend_handles = [plt.scatter([], [], marker=shape, label=' '.join(ngram), color=color, edgecolors='black', s=50) for ngram, shape, color in zip(regex_list, marker_shapes, marker_colors)]
@@ -82,6 +70,7 @@ def plot_occurrences(corpus_dir, regex_list):
 
     # Create a bar chart to visualize the number of occurrences
     ngram_counts = np.array([[len(positions) for positions in count_list] for count_list in occurrences.values()]).T
+
     bar_width = 0.8 / len(regex_list)
 
     for idx, (ngram, color) in enumerate(zip(regex_list, marker_colors)):
@@ -89,7 +78,8 @@ def plot_occurrences(corpus_dir, regex_list):
 
     ax2.set_yticks([])
     ax2.set_xlabel('Number of occurrences')
-    ax2.grid(axis='x')
+    ax2.grid(True, which='both', axis='x')
+    ax2.invert_yaxis()
 
     plt.tight_layout()
     return plt
