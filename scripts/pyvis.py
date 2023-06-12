@@ -26,7 +26,7 @@ def py2neo_to_pyvis(net: Network, obj: Union[Path, Node, Relationship], auto_rel
         if obj['title'] is None:
             obj['title'] = neo4j_label
         if obj['label'] is None:
-           obj['label'] = (neo4j_label if auto_rel_label else None)
+            obj['label'] = (neo4j_label if auto_rel_label else None)
         if obj['group'] is None:
             obj['group'] = str(obj.labels)
         if obj['width'] is None:
