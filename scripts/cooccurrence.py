@@ -95,7 +95,7 @@ def filter_counters(counters: List[Counter], global_counter: Counter, max_global
 
     return filtered_counters
 
-def create_heatmap(df, counters, max_words=20):
+def create_heatmap(df, counters, max_words=20, file=None):
     labels = [f"{author} ({year})" for author, year in zip(df['author'], df['year'])]
 
     # Find the most common words across all counters
@@ -115,4 +115,6 @@ def create_heatmap(df, counters, max_words=20):
     plt.figure(figsize=(12, 6))
     sns.heatmap(df, annot=True, cmap='coolwarm', fmt='d')
     plt.yticks(rotation=0)
+    if file is not None:
+        plt.savefig(file, bbox_inches="tight", dpi=300)
     plt.show()
