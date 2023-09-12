@@ -2,18 +2,20 @@ import pandas as pd
 from tqdm.notebook import tqdm
 import json
 import requests
-import os
 import re
 import csv
-from dotenv import load_dotenv
 from py2neo import Graph
+import os
+import pickle
+from dotenv import load_dotenv
+from IPython.display import display, HTML
+
+load_dotenv()
 
 def get_graph(name):
-    load_dotenv()
     return Graph(os.getenv('NEO4J_URL'), name=name)
 
 def get_corpus_dir(name):
-    load_dotenv()
     return os.path.join(os.getenv('CORPUS_BASE_DIR'), name)
 
 class DOICache:
@@ -140,3 +142,72 @@ def create_corpus(corpus_dir, doi_cache : DOICache=None) -> pd.DataFrame:
                         'author': author
                     })
     return pd.DataFrame(articles).sort_values(by='year').astype({'year':'Int64'})
+
+def create_cached_corpus(cache_id:str):
+    corpus_dir = os.getenv(f"{cache_id.upper()}_CORPUS_DIR"),
+    cache_file_path = f'cache/{cache_id}.pkl'
+    if not os.path.exists(cache_file_path):
+        doi_cache_file = f"data/{cache_id}-doi-to-year.csv"
+        doi_cache = DOICache(doi_cache_file) if os.path.exists(doi_cache_file) else None
+        articles_df = create_corpus(corpus_dir, doi_cache)
+        with open(cache_file_path, mode='wb') as f:
+            pickle.dump(articles_df, f)
+    else:
+        with open(cache_file_path, mode='rb') as f:
+            articles_df = pickle.load(f)
+    return articles_df
+
+def df_to_html(df, file=None):
+
+    """
+    Generate (and optionally save) a Jupyter like html of pandas dataframe
+    Adapted from https://github.com/ljmartin/df_to_svg/blob/main/code/write_html.ipynb
+    """
+
+    styles = [
+        #table properties
+        dict(selector=" ",
+             props=[("margin","0"),
+                    ("font-family",'"Helvetica", "Arial", sans-serif'),
+                    ("border-collapse", "collapse"),
+                    ("border","none"),
+                    #("border", "2px solid #ccf") #border looks bad
+                    ]),
+
+        #header color - optional
+        #     dict(selector="thead",
+        #          props=[("background-color","#cc8484")
+        #                ]),
+
+        #background shading
+        dict(selector="tbody tr:nth-child(even)",
+             props=[("background-color", "#fff")]),
+        dict(selector="tbody tr:nth-child(odd)",
+             props=[("background-color", "#eee")]),
+
+        #cell spacing
+        dict(selector="td",
+             props=[("padding", ".5em")]),
+
+        #header cell properties
+        dict(selector="th",
+             props=[("font-size", "100%"),
+                    ("text-align", "center")]),
+    ]
+    html = (df.style.set_table_styles(styles)).to_html()
+    html = f"""
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+{html}
+</body>
+</html>
+    """
+    if file:
+        with open(file, 'w', encoding='utf-8') as b:
+            b.write(html)
+    return display(HTML(html))

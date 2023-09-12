@@ -108,7 +108,7 @@ def compare_persons(persons, year_start, year_end = float('inf')):
     all_data = {}
     for person in persons:
         last_name = person.split()[0]
-        file_path = f"data/{last_name}.csv"
+        file_path = f"data/dnb/{last_name}.csv"
         if not os.path.exists(file_path):
             query_to_csv(person, file_path)
         data = load_data_from_csv(file_path)
@@ -130,7 +130,7 @@ def extract_first_year(year_str):
         return years[0]
     return None
 
-def plot_comparison(yearly_counts):
+def plot_comparison(yearly_counts, lang="en", filename=None):
     plt.figure(figsize=(15, 8))
     min_year = float('inf')
     max_year = float('-inf')
@@ -156,15 +156,16 @@ def plot_comparison(yearly_counts):
     plt.gca().xaxis.set_minor_locator(plt.FixedLocator(minor_ticks))
     plt.gca().tick_params(axis='x', rotation=45)
 
-    plt.xlabel('Year')
-    plt.ylabel('Number of Publications')
-    plt.title('Number of Publications per Year')
+    if lang=="de":
+        plt.xlabel('Jahr')
+        plt.ylabel('Zahl der Publikationen')
+        plt.title('Zahl der Publikationen pro Jahr')
+    else:
+        plt.xlabel('Year')
+        plt.ylabel('Number of Publications')
+        plt.title('Number of Publications per Year')
+
     plt.legend()
+    if filename:
+        plt.savefig(f"docs/{filename}", dpi=600)
     plt.show()
-
-
-
-
-
-
-

@@ -18,7 +18,9 @@ def save_occurrences(articles_df, regex_list, file):
     df = df[~(df[regex_list] == 0).all(axis=1)]
     df.to_excel(file, index=False)
 
-def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None):
+def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None,
+                     add_article_list=False,
+                     x_label=None, y_label=None, title=None):
 
     # Find the occurrences of each regex in the text files
     for regex in regex_list:
@@ -40,13 +42,14 @@ def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None):
         top_articles = top_articles.loc[top_articles['year'] <= last_year]
     top_articles = top_articles.reset_index(drop=True)
 
-
-
     years = grouped_occurrences.index
     n_years = len(years)
     bar_width = 0.8 / len(regex_list)
 
-    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(16, 6), gridspec_kw={'width_ratios': [3, 1]})
+    if add_article_list:
+        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(16, 6), gridspec_kw={'width_ratios': [3, 1]})
+    else:
+        fig, ax1 = plt.subplots()
 
     for idx, regex in enumerate(regex_list):
         x = np.arange(n_years) + idx * bar_width
@@ -55,7 +58,8 @@ def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None):
         # add number on top of bar chart
         if idx == 0:
             for i, v in enumerate(grouped_occurrences[regex]):
-                ax1.text(i - 0.25, v + 0.25, str(v), fontsize=9)
+                if v > 0:
+                    ax1.text(i - 0.25, v + 0.25, str(v), fontsize=9)
 
     ax1.set_xticks(np.arange(n_years))
     ax1.set_xticklabels(years)
@@ -63,18 +67,22 @@ def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None):
     ax1.xaxis.set_minor_locator(ticker.MultipleLocator(base=1))
     ax1.grid(axis='x', which='minor', linestyle=':', alpha=0.5)
 
-    ax1.set_xlabel('Year')
-    ax1.set_ylabel('Occurrences of search terms')
+    # Title, labels and legend
+    if x_label: ax1.set_xlabel(x_label)
+    if y_label: ax1.set_ylabel(y_label)
+    if title is not None:
+        plt.title(title)
     ax1.legend()
 
     # Create the box with the numbered list of top articles
-    top_articles_list = [
-        f'{i+1}. {row["author"]} ({row["year"]}) {truncate(row["title"], 30)} [{row[first_regex]}]'
-        for i, row in top_articles.iterrows()
-    ]
-    ax2.axis('off')
-    for i, text in enumerate(top_articles_list):
-        ax2.text(0, 1 - i * 0.05, text, fontsize=10, verticalalignment='top')
+    if add_article_list:
+        top_articles_list = [
+            f'{i+1}. {row["author"]} ({row["year"]}) {truncate(row["title"], 30)} [{row[first_regex]}]'
+            for i, row in top_articles.iterrows()
+        ]
+        ax2.axis('off')
+        for i, text in enumerate(top_articles_list):
+            ax2.text(0, 1 - i * 0.05, text, fontsize=10, verticalalignment='top')
 
     plt.tight_layout()
     return plt

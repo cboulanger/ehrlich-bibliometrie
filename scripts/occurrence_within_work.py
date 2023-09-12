@@ -25,7 +25,7 @@ def create_corpus(name) -> pd.DataFrame:
 
     return pd.DataFrame(book_data)
 
-def plot_occurrences(corpus: pd.DataFrame, regex_list):
+def plot_occurrences(corpus: pd.DataFrame, regex_list, x_label=None, y_label=None, barchart_label=None):
 
     # Extract years from book titles and sort the books by year
     corpus['year'] = corpus['book_title'].apply(extract_year)
@@ -59,13 +59,14 @@ def plot_occurrences(corpus: pd.DataFrame, regex_list):
 
     ax1.set_yticks(y)
     ax1.set_yticklabels(corpus['book_title'])
-    ax1.set_xlabel('Normalized text length')
-    ax1.set_ylabel('Books (sorted by year)')
+    if x_label: ax1.set_xlabel(x_label)
+    if y_label: ax1.set_ylabel(y_label)
     ax1.grid(axis='x')
     ax1.invert_yaxis()
 
     # Create a custom legend
-    legend_handles = [plt.scatter([], [], marker=shape, label=' '.join(ngram), color=color, edgecolors='black', s=50) for ngram, shape, color in zip(regex_list, marker_shapes, marker_colors)]
+    legend_handles = [plt.scatter([], [], marker=shape, label=' '.join(ngram), color=color, edgecolors='black', s=50) \
+                      for ngram, shape, color in zip(regex_list, marker_shapes, marker_colors)]
     ax1.legend(handles=legend_handles, loc='upper center')
 
     # Create a bar chart to visualize the number of occurrences
@@ -77,7 +78,8 @@ def plot_occurrences(corpus: pd.DataFrame, regex_list):
         ax2.barh(np.array(y) + idx * bar_width, ngram_counts[:, idx], height=bar_width, label=ngram, color=color)
 
     ax2.set_yticks([])
-    ax2.set_xlabel('Number of occurrences')
+    if barchart_label:
+        ax2.set_xlabel(barchart_label)
     ax2.grid(True, which='both', axis='x')
     ax2.invert_yaxis()
 
