@@ -28,9 +28,9 @@ def py2neo_to_pyvis(net: Network,
         p = strip_property_prefix(dict(obj), "vis_")
         label = p['display_name'] or p['title'] or p['name'] or p['id'] or ''
         p['label'] = shorten(label, width=50, placeholder="...").replace(':', ':\n')
-        if 'group' not in p:
+        if 'group' not in p or p['group'] is None:
             p['group'] = str(obj.labels)
-        if 'font' not in p:
+        if 'font' not in p or p['font'] is None:
             p['font'] = {'size': font_default_size}
         net.add_node(obj.identity, **p)
     elif issubclass(type(obj), Relationship):
@@ -44,13 +44,13 @@ def py2neo_to_pyvis(net: Network,
         py2neo_to_pyvis(net, end_node)
         neo4j_label = type(obj).__name__
         p = strip_property_prefix(dict(obj), "vis_")
-        if 'title' not in p:
+        if 'title' not in p or p['title'] is None:
             p['title'] = neo4j_label
-        if 'label' not in p:
+        if 'label' not in p or p['label'] is None:
             p['label'] = (neo4j_label if auto_rel_label else None)
-        if 'group' not in p:
+        if 'group' not in p or p['group'] is None:
             p['group'] = neo4j_label
-        if 'width' not in p:
+        if 'width' not in p or p['width'] is None:
             p['width'] = edge_default_width
         net.add_edge(start_node.identity, end_node.identity, **p)
 
@@ -116,14 +116,14 @@ def draw(graph: Graph,
     return draw_network(net, file=file, link_only=not do_display)
 
 def cleanup(graph: Graph):
-    # remove styling
+    # remove styling properties from nodes and relationships
     graph.run("""
-    MATCH (n) WHERE any(key IN keys(n) WHERE key STARTS WITH 'vis_')
-    WITH n, [key IN keys(n) WHERE key STARTS WITH 'vis_'] AS keys
-    CALL apoc.create.removeProperties(n, keys) YIELD node RETURN node;
+        MATCH (n) WHERE any(key IN keys(n) WHERE key STARTS WITH 'vis_')
+        WITH n, [key IN keys(n) WHERE key STARTS WITH 'vis_'] AS keys
+        CALL apoc.create.removeProperties(n, keys) YIELD node RETURN node;
     """)
     graph.run("""
-    MATCH ()-[r]-() WHERE any(key IN keys(r) WHERE key STARTS WITH 'vis_')
-    WITH r, [key IN keys(r) WHERE key STARTS WITH 'vis_'] AS keys
-    CALL apoc.create.removeRelProperties(r, keys) YIELD rel RETURN rel;
+        MATCH ()-[r]-() WHERE any(key IN keys(r) WHERE key STARTS WITH 'vis_')
+        WITH r, [key IN keys(r) WHERE key STARTS WITH 'vis_'] AS keys
+        CALL apoc.create.removeRelProperties(r, keys) YIELD rel RETURN rel;
     """)
