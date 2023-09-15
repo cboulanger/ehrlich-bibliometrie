@@ -2,7 +2,7 @@
 
 This notebook contains the code to generate the graphs and figures used in the publication
 
-Christian Boulanger, "Ehrlich-Rezeption in den 1970er- und 1980er-Jahren: eine digitale Spurensuche", 
+> Christian Boulanger, "Ehrlich-Rezeption in den 1970er- und 1980er-Jahren: eine digitale Spurensuche", 
 in: Marietta Auer, Ralf Seinecke, Eugen Ehrlich - Kontexte und Rezeptionen, Tübingen: Mohr-Siebeck, 2024.
 
 The data for the following queries were obtained by querying the Web of Science and OpenAlex databases as well as
