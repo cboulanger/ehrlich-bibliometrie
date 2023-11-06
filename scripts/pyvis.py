@@ -26,7 +26,7 @@ def py2neo_to_pyvis(net: Network,
             py2neo_to_pyvis(net, o)
     elif type(obj) is Node:
         p = strip_property_prefix(dict(obj), "vis_")
-        label = p['label'] or p['display_name'] or p['title'] or p['name'] or p['id'] or ''
+        label = p.get('label') or p.get('display_name') or p.get('title') or p.get('name') or p.get('id') or ''
         p['label'] = shorten(label, width=50, placeholder="...").replace(':', ':\n')
         if 'group' not in p or p['group'] is None:
             p['group'] = str(obj.labels)
