@@ -12,6 +12,8 @@ def plot(title=None,
          plot_style='fivethirtyeight',
          line_styles=None,
          line_width=2,
+         aggregate=False,
+         significant_correlation_value=None,
          **search_para):
     # configuration
     if line_styles is None:
@@ -19,6 +21,13 @@ def plot(title=None,
     case_insensitive = search_para.get('case_insensitive', False)
     if not case_insensitive:
         search_para.pop('case_insensitive', None)
+    search_terms = search_para['content'].split(",")
+    window_size = search_para['smoothing']
+    if significant_correlation_value:
+        if window_size < 2:
+            raise RuntimeError("Correlation requires a minimal smoothing of 2")
+        if len(search_terms) != 2:
+            raise RuntimeError("Correlation can only be between two terms")
 
     # Get data from Google NGram Viewer
     req = requests.get('http://books.google.com/ngrams/graph', params=search_para)
@@ -36,6 +45,10 @@ def plot(title=None,
         freq = freq[[col for col in freq.columns if suffix in col]]
         freq = freq.rename(columns={col: col.replace(suffix, '') for col in freq.columns if suffix in col})
 
+    # aggregate columns
+    if aggregate:
+        freq[search_para['content']] = freq.sum(axis=1)
+
     # plot
     plt.style.use(plot_style)
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -44,11 +57,33 @@ def plot(title=None,
                           linewidth=line_width,
                           linestyle=line_styles[i % len(line_styles)],
                           label=column)
+
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_title(title)
     ax.legend(loc='best')
 
+    # add a plot for the correlation
+    if significant_correlation_value:
+        # Calculate rolling correlation
+        corr = freq[search_terms[0]].rolling(window=window_size).corr(freq[search_terms[1]])
+        # Create boolean Series for positive and negative significant correlation
+        significant_corr_positive = corr > significant_correlation_value
+        significant_corr_negative = corr < -significant_correlation_value
+
+        # Plot areas for significant correlations
+        ax.fill_between(freq.index, freq[search_terms[0]], freq[search_terms[1]],
+                        where=significant_corr_positive,
+                        facecolor='green', alpha=0.3,
+                        label=f'Correlation > {str(significant_correlation_value)}')
+        ax.fill_between(freq.index, freq[search_terms[0]], freq[search_terms[1]],
+                        where=significant_corr_negative,
+                        facecolor='red', alpha=0.3,
+                        label=f'Correlation < -{str(significant_correlation_value)}')
+        ax.legend(loc='best')
+
     if file:
         plt.savefig(file, dpi=300)
+
+
 
