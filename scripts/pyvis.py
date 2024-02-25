@@ -61,10 +61,11 @@ def create_or_update_network(graph: Graph,
                              auto_rel_label=False,
                              net: Network = None,
                              seed: int = None,
+                             heading: str = None,
                              **kwargs) -> Network:
     data = graph.run(query, **kwargs).data()
     if net is None:
-        net = Network(height, notebook=True, cdn_resources='in_line', directed=True)
+        net = Network(height, notebook=True, cdn_resources='in_line', directed=True, heading=heading)
         net.force_atlas_2based(overlap=0.7, damping=1)
         if seed is not None:
             options = json.loads(net.options.to_json())

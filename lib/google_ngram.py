@@ -47,7 +47,9 @@ def plot(title=None,
 
     # aggregate columns
     if aggregate:
-        freq[search_para['content']] = freq.sum(axis=1)
+        agg_col = "/".join(search_terms)
+        freq[agg_col] = freq.sum(axis=1)
+        freq = freq[[agg_col]]
 
     # plot
     plt.style.use(plot_style)
