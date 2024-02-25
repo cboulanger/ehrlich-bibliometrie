@@ -54,7 +54,7 @@ def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None,
     for idx, regex in enumerate(regex_list):
         x = np.arange(n_years) + idx * bar_width
         y = grouped_occurrences[regex]
-        ax1.bar(x, y, width=bar_width, label=regex, color=plt.cm.Dark2(idx))
+        ax1.bar(x, y, width=bar_width, label=regex, color=plt.cm.tab20(idx))
         # add number on top of bar chart
         if idx == 0:
             for i, v in enumerate(grouped_occurrences[regex]):

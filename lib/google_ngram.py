@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 def plot(title=None,
          xlabel=None, ylabel='Relative Term frequency',
          file=None,
-         plot_style='fivethirtyeight',
+         plot_style='ggplot',
          line_styles=None,
          line_width=2,
          aggregate=False,
