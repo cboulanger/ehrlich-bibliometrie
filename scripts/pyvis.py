@@ -78,6 +78,15 @@ def create_or_update_network(graph: Graph,
     return net
 
 
+def make_screenshot(html_file, scale_factor=5, run_javascript='', delay=500):
+    result = subprocess.run(['python', 'scripts/save-screenshot.py', html_file, str(scale_factor), run_javascript, str(delay)],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+    error = result.stderr.decode('utf-8')
+    if error != "":
+        raise RuntimeError(error)
+
+
 def draw_network(net: Network,
                  file: str = None,
                  link_only=False,
@@ -88,12 +97,7 @@ def draw_network(net: Network,
             with open(file, mode="w", encoding="utf-8") as f:
                 f.write(html)
             if screenshot:
-                result = subprocess.run(['python', 'scripts/save-screenshot.py', file], stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
-                error = result.stderr.decode('utf-8')
-                if error != "":
-                    raise RuntimeError(error)
-
+                make_screenshot(file, "network.stopSimulation()")
         else:
             raise RuntimeError("Unsupported file extension")
 

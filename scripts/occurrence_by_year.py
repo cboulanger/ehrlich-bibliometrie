@@ -20,7 +20,10 @@ def save_occurrences(articles_df, regex_list, file):
 
 def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None,
                      add_article_list=False,
-                     x_label=None, y_label=None, title=None):
+                     x_label=None, y_label=None, title=None,
+                     figsize=None, plot_style="default", bar_color_palette="tab20"):
+
+    plt.style.use(plot_style)
 
     # Find the occurrences of each regex in the text files
     for regex in regex_list:
@@ -47,14 +50,17 @@ def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None,
     bar_width = 0.8 / len(regex_list)
 
     if add_article_list:
+        if figsize:
+            plt.figure(figsize=figsize)
         fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(16, 6), gridspec_kw={'width_ratios': [3, 1]})
     else:
-        fig, ax1 = plt.subplots()
+        fig, ax1 = plt.subplots(figsize=figsize)
 
     for idx, regex in enumerate(regex_list):
         x = np.arange(n_years) + idx * bar_width
         y = grouped_occurrences[regex]
-        ax1.bar(x, y, width=bar_width, label=regex, color=plt.cm.tab20(idx))
+        color_fn = getattr(plt.cm, bar_color_palette)
+        ax1.bar(x, y, width=bar_width, label=regex, color=color_fn(idx))
         # add number on top of bar chart
         if idx == 0:
             for i, v in enumerate(grouped_occurrences[regex]):

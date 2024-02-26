@@ -8,7 +8,6 @@ from py2neo import Graph
 import os
 import pickle
 from dotenv import load_dotenv
-from IPython.display import display, HTML
 
 load_dotenv()
 
@@ -157,7 +156,7 @@ def create_cached_corpus(cache_id:str):
             articles_df = pickle.load(f)
     return articles_df
 
-def df_to_html(df, file=None):
+def df_to_nice_html(df, file=None):
 
     """
     Generate (and optionally save) a Jupyter like html of pandas dataframe
@@ -210,4 +209,4 @@ def df_to_html(df, file=None):
     if file:
         with open(file, 'w', encoding='utf-8') as b:
             b.write(html)
-    return display(HTML(html))
+    return html

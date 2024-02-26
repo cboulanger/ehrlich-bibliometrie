@@ -9,12 +9,13 @@ import matplotlib.pyplot as plt
 def plot(title=None,
          xlabel=None, ylabel='Relative Term frequency',
          file=None,
-         plot_style='ggplot',
+         plot_style='default',
          line_styles=None,
          line_width=2,
          aggregate=False,
          significant_correlation_value=None,
          **search_para):
+
     # configuration
     if line_styles is None:
         line_styles = ['-', '--', '-.', ':']
