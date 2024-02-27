@@ -29,7 +29,10 @@ def print_occurences(data_frame, regex_list):
 
 def plot_by_year(data, dep_col='term',
                  title= None, x_label=None, y_label=None, y_axis_limit=None,
-                 file=None, dpi=300, scale_factor=300, color='darkblue'):
+                 file=None, dpi=300, scale_factor=300, color='darkblue', plotstyle="default"):
+
+    plt.style.use(plotstyle)
+
     years = data['year'].values
     dep_var = data[dep_col].values
     citation_counts = data['count'].values

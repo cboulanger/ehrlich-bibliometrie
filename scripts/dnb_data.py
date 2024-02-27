@@ -130,8 +130,15 @@ def extract_first_year(year_str):
         return years[0]
     return None
 
-def plot_comparison(yearly_counts, lang="en", filename=None):
-    plt.figure(figsize=(15, 8))
+def plot_comparison(yearly_counts, filename=None, lang=None,
+                    title=None, xlabel=None, ylabel=None,
+                    figsize=None, fontsize=None, dpi=300):
+
+    # size
+    if figsize is None:
+        figsize = (15,8)
+    plt.figure(figsize=figsize)
+
     min_year = float('inf')
     max_year = float('-inf')
 
@@ -154,18 +161,27 @@ def plot_comparison(yearly_counts, lang="en", filename=None):
 
     plt.gca().xaxis.set_major_locator(plt.FixedLocator(major_ticks))
     plt.gca().xaxis.set_minor_locator(plt.FixedLocator(minor_ticks))
-    plt.gca().tick_params(axis='x', rotation=45)
+    plt.gca().tick_params(axis='x', rotation=45, labelsize=fontsize)
 
-    if lang=="de":
-        plt.xlabel('Jahr')
-        plt.ylabel('Zahl der Publikationen')
-        plt.title('Zahl der Publikationen pro Jahr')
+    if lang:
+        if lang=="de":
+            plt.xlabel('Jahr',fontsize=fontsize)
+            plt.ylabel('Zahl der Publikationen',fontsize=fontsize)
+            plt.title('Zahl der Publikationen pro Jahr',fontsize=fontsize)
+        else:
+            plt.xlabel('Year',fontsize=fontsize)
+            plt.ylabel('Number of Publications',fontsize=fontsize)
+            plt.title('Number of Publications per Year',fontsize=fontsize)
     else:
-        plt.xlabel('Year')
-        plt.ylabel('Number of Publications')
-        plt.title('Number of Publications per Year')
+        if title:
+            plt.title(title)
+        if xlabel:
+            plt.xlabel(xlabel,fontsize=fontsize)
+        if ylabel:
+            plt.ylabel(ylabel,fontsize=fontsize)
 
-    plt.legend()
+    plt.legend(fontsize=fontsize)
+
     if filename:
-        plt.savefig(f"docs/{filename}", dpi=600)
+        plt.savefig(filename, dpi=dpi)
     plt.show()

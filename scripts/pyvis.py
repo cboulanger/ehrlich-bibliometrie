@@ -61,7 +61,7 @@ def create_or_update_network(graph: Graph,
                              auto_rel_label=False,
                              net: Network = None,
                              seed: int = None,
-                             heading: str = None,
+                             heading: str = "",
                              **kwargs) -> Network:
     data = graph.run(query, **kwargs).data()
     if net is None:
@@ -97,14 +97,14 @@ def draw_network(net: Network,
             with open(file, mode="w", encoding="utf-8") as f:
                 f.write(html)
             if screenshot:
-                make_screenshot(file, "network.stopSimulation()")
+                make_screenshot(file, run_javascript="network.stopSimulation()")
         else:
             raise RuntimeError("Unsupported file extension")
 
     if file:
         if link_only:
             display(HTML(f'<a href="{file}" target="_blank">Click here to open the graph.</a>'))
-        if screenshot:
+        elif screenshot:
             display(Image(filename=file.replace('.html', '.png')))
     else:
         display(HTML(html))

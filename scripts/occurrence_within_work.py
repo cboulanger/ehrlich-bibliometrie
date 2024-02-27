@@ -25,7 +25,11 @@ def create_corpus(name) -> pd.DataFrame:
 
     return pd.DataFrame(book_data)
 
-def plot_occurrences(corpus: pd.DataFrame, regex_list, x_label=None, y_label=None, barchart_label=None):
+def plot_occurrences(corpus: pd.DataFrame, regex_list, x_label=None, y_label=None,
+                     barchart_label=None, marker_colors=None, marker_shapes=None,
+                     figsize=None, plot_style="default",fontsize=10):
+
+    plt.style.use(plot_style)
 
     # Extract years from book titles and sort the books by year
     corpus['year'] = corpus['book_title'].apply(extract_year)
@@ -43,31 +47,38 @@ def plot_occurrences(corpus: pd.DataFrame, regex_list, x_label=None, y_label=Non
     # Create an array of ones to span the whole x-axis
     book_normalized_lengths = [1] * len(corpus)
 
-    marker_shapes = ['o', 's', '^']  # dot, square, triangle (add more shapes as needed)
-    marker_colors = ['red', 'blue', 'green']  # add more colors as needed
+    if marker_shapes is None:
+        marker_shapes = ['o', 's', '^']  # dot, square, triangle (add more shapes as needed)
+    if marker_colors is None:
+        marker_colors = ['red', 'blue', 'green']  # add more colors as needed
 
-    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(16, 5), gridspec_kw={'width_ratios': [4, 1]})
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=figsize, gridspec_kw={'width_ratios': [4, 1]})
 
     y = range(len(corpus))
 
-    ax1.barh(y, book_normalized_lengths, color='lightgray', edgecolor='black', linewidth=1)
+    ax1.barh(y, book_normalized_lengths, color='none', edgecolor='black', linewidth=1)
 
     for regex, shape, color, counts in zip(regex_list, marker_shapes, marker_colors, occurrences.values()):
         for i, positions in enumerate(counts):
             x_positions = [pos * book_normalized_lengths[i] for pos in positions]
-            ax1.scatter(x_positions, [i] * len(x_positions), marker=shape, label=regex, color=color, edgecolors=color, s=50)
+            edge_color = color if color not in ['white','none'] else 'black'
+            ax1.scatter(x_positions, [i] * len(x_positions), marker=shape, label=regex, color=color, edgecolors=edge_color, s=50)
 
-    ax1.set_yticks(y)
-    ax1.set_yticklabels(corpus['book_title'])
-    if x_label: ax1.set_xlabel(x_label)
-    if y_label: ax1.set_ylabel(y_label)
+    # axis labels
+    ax1.set_yticks(y, fontsize=fontsize)
+    ax1.set_yticklabels(corpus['book_title'], fontsize=fontsize)
+    if x_label:
+        ax1.set_xlabel(x_label, fontsize=fontsize)
+    if y_label:
+        ax1.set_ylabel(y_label, fontsize=fontsize)
+
     ax1.grid(axis='x')
     ax1.invert_yaxis()
 
     # Create a custom legend
     legend_handles = [plt.scatter([], [], marker=shape, label=' '.join(ngram), color=color, edgecolors='black', s=50) \
                       for ngram, shape, color in zip(regex_list, marker_shapes, marker_colors)]
-    ax1.legend(handles=legend_handles, loc='upper center')
+    ax1.legend(handles=legend_handles, loc='upper left', bbox_to_anchor=(0, -0.1), fontsize=fontsize)
 
     # Create a bar chart to visualize the number of occurrences
     ngram_counts = np.array([[len(positions) for positions in count_list] for count_list in occurrences.values()]).T
@@ -75,11 +86,12 @@ def plot_occurrences(corpus: pd.DataFrame, regex_list, x_label=None, y_label=Non
     bar_width = 0.8 / len(regex_list)
 
     for idx, (ngram, color) in enumerate(zip(regex_list, marker_colors)):
-        ax2.barh(np.array(y) + idx * bar_width, ngram_counts[:, idx], height=bar_width, label=ngram, color=color)
+        edge_color = color if color not in ['white','none'] else 'black'
+        ax2.barh(np.array(y) + idx * bar_width, ngram_counts[:, idx], height=bar_width, label=ngram, color=color, edgecolor=edge_color)
 
     ax2.set_yticks([])
     if barchart_label:
-        ax2.set_xlabel(barchart_label)
+        ax2.set_xlabel(barchart_label, fontsize=fontsize)
     ax2.grid(True, which='both', axis='x')
     ax2.invert_yaxis()
 

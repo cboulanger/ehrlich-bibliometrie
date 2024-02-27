@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.ticker as ticker
 import matplotlib.pyplot as plt
 from scripts.utils import truncate
+from matplotlib.transforms import offset_copy
 
 def save_occurrences(articles_df, regex_list, file):
     # create a copy of the dataframe
@@ -21,9 +22,13 @@ def save_occurrences(articles_df, regex_list, file):
 def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None,
                      add_article_list=False,
                      x_label=None, y_label=None, title=None,
-                     figsize=None, plot_style="default", bar_color_palette="tab20"):
+                     figsize=None, plot_style="default", bar_color_palette="tab20", fontsize=12):
 
     plt.style.use(plot_style)
+
+    # default size
+    if figsize is None:
+        figsize = (16, 10)
 
     # Find the occurrences of each regex in the text files
     for regex in regex_list:
@@ -50,22 +55,32 @@ def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None,
     bar_width = 0.8 / len(regex_list)
 
     if add_article_list:
-        if figsize:
-            plt.figure(figsize=figsize)
-        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(16, 6), gridspec_kw={'width_ratios': [3, 1]})
+        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=figsize, gridspec_kw={'width_ratios': [3, 1]})
     else:
         fig, ax1 = plt.subplots(figsize=figsize)
 
     for idx, regex in enumerate(regex_list):
         x = np.arange(n_years) + idx * bar_width
         y = grouped_occurrences[regex]
-        color_fn = getattr(plt.cm, bar_color_palette)
-        ax1.bar(x, y, width=bar_width, label=regex, color=color_fn(idx))
-        # add number on top of bar chart
+
+        # color the bars
+        if bar_color_palette == "monochrome":
+            edgecolor = 'black'
+            color = 'black' if idx == 0 else 'none'
+        else:
+            edgecolor = None
+            color = getattr(plt.cm, bar_color_palette)(idx)
+        bars = ax1.bar(x, y, width=bar_width, label=regex, color=color, edgecolor=edgecolor)
+
+        # Add number on top of the first bar chart with consistent padding
         if idx == 0:
-            for i, v in enumerate(grouped_occurrences[regex]):
-                if v > 0:
-                    ax1.text(i - 0.25, v + 0.25, str(v), fontsize=9)
+            for bar in bars:
+                height = bar.get_height()
+                if height > 0:
+                    # Use offset_copy to make the offset in pixels, ensuring consistent padding
+                    trans = offset_copy(ax1.transData, fig=fig, y=3, units='dots')
+                    ax1.text(bar.get_x() + bar.get_width() / 2, height, str(height), fontsize=10,
+                             ha='center', va='bottom', transform=trans)
 
     ax1.set_xticks(np.arange(n_years))
     ax1.set_xticklabels(years)
@@ -73,12 +88,19 @@ def plot_occurrences(articles_df, regex_list, first_year=None, last_year=None,
     ax1.xaxis.set_minor_locator(ticker.MultipleLocator(base=1))
     ax1.grid(axis='x', which='minor', linestyle=':', alpha=0.5)
 
+    # add some padding to the y-axis do that the bar labels aren't cut off
+    ymin, ymax = ax1.get_ylim()
+    padding = (ymax - ymin) * 0.05
+    ax1.set_ylim(ymin, ymax + padding)
+
     # Title, labels and legend
-    if x_label: ax1.set_xlabel(x_label)
-    if y_label: ax1.set_ylabel(y_label)
+    if x_label:
+        ax1.set_xlabel(x_label, fontsize=fontsize)
+    if y_label:
+        ax1.set_ylabel(y_label, fontsize=fontsize)
     if title is not None:
         plt.title(title)
-    ax1.legend()
+    ax1.legend(fontsize=fontsize)
 
     # Create the box with the numbered list of top articles
     if add_article_list:
