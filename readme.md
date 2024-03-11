@@ -7,10 +7,10 @@ in: Marietta Auer, Ralf Seinecke, Eugen Ehrlich - Kontexte und Rezeptionen, Tüb
 
 The data for the following queries were obtained by querying the Web of Science and OpenAlex databases as well as
 automatic citation extraction from the full texts of the Zeitschrift für Rechtssoziologie, the Journal of Law and 
-Society and a collection of legal sociology textbooks between 1960 and 1989. The data of citation extraction is 
-partially erroneous and incomplete due to the current deficiencies automated extraction. However, these errors 
-should be evenly distributed. Therefore, results that do not concern individual values but express larger trends, 
-should  be generally reliable.
+Society and a collection of legal sociology textbooks between 1960 and 1989. Expect the data of citation extraction to be 
+partially incorrect and incomplete. This is due to the deficiencies of automated extraction at the time of doing the
+research. However, these errors should be evenly distributed and results that do not concern individual values but 
+express larger trends should be relatively reliable.
 
 ## Requirements & Configuration
 
