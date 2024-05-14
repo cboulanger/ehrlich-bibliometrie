@@ -5,6 +5,8 @@ This notebook contains the code to generate the graphs and figures used in the p
 > Christian Boulanger, "Ehrlich-Rezeption in den 1970er- und 1980er-Jahren: eine digitale Spurensuche", 
 in: Marietta Auer, Ralf Seinecke, Eugen Ehrlich - Kontexte und Rezeptionen, Tübingen: Mohr-Siebeck, 2024, S. 389-424.
 
+The figures can be found in the ["docs" subdirectory](./docs/) and are published [here](https://cboulanger.github.io/ehrlich-bibliometrie/). 
+
 The data for the following queries were obtained by querying the Web of Science and OpenAlex databases and by automatic
 citation extraction from the full texts of the Zeitschrift für Rechtssoziologie, the Journal of Law and Society, and a 
 collection of legal sociology textbooks between 1960 and 1989. It is to be expected that the data from the citation 
