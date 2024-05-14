@@ -3,14 +3,14 @@
 This notebook contains the code to generate the graphs and figures used in the publication
 
 > Christian Boulanger, "Ehrlich-Rezeption in den 1970er- und 1980er-Jahren: eine digitale Spurensuche", 
-in: Marietta Auer, Ralf Seinecke, Eugen Ehrlich - Kontexte und Rezeptionen, Tübingen: Mohr-Siebeck, 2024.
+in: Marietta Auer, Ralf Seinecke, Eugen Ehrlich - Kontexte und Rezeptionen, Tübingen: Mohr-Siebeck, 2024, S. 389-424.
 
-The data for the following queries were obtained by querying the Web of Science and OpenAlex databases as well as
-automatic citation extraction from the full texts of the Zeitschrift für Rechtssoziologie, the Journal of Law and 
-Society and a collection of legal sociology textbooks between 1960 and 1989. Expect the data of citation extraction to be 
-partially incorrect and incomplete. This is due to the deficiencies of automated extraction at the time of doing the
-research. However, these errors should be evenly distributed and results that do not concern individual values but 
-express larger trends should be relatively reliable.
+The data for the following queries were obtained by querying the Web of Science and OpenAlex databases and by automatic
+citation extraction from the full texts of the Zeitschrift für Rechtssoziologie, the Journal of Law and Society, and a 
+collection of legal sociology textbooks between 1960 and 1989. It is to be expected that the data from the citation 
+extraction will be partially incorrect and incomplete. This is due to the shortcomings of the automated extraction 
+at the time of the research. However, these errors should be evenly distributed; results that do not concern individual 
+values but express larger trends should be relatively reliable.
 
 ## Requirements & Configuration
 
@@ -26,7 +26,7 @@ express larger trends should be relatively reliable.
   data dumps which can be imported into the Neo4J Graph database v4.4.
 - The data obtained from the Web of Science cannot be shared due to legal reasons. 
 - The same applies to the fulltexts of the ZfRsoz and the JLS, which you will have to download and convert to text 
-files yourself, if you want to run the corpus analyses. 
+  files yourself, if you want to run the corpus analyses. 
 
 
  
