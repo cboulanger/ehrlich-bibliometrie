@@ -7,12 +7,13 @@ in: Marietta Auer, Ralf Seinecke, Eugen Ehrlich - Kontexte und Rezeptionen, Tüb
 
 The figures can be found in the ["docs" subdirectory](./docs/) and are published [here](https://cboulanger.github.io/ehrlich-bibliometrie/). 
 
-The data for the following queries were obtained by querying the Web of Science and OpenAlex databases and by automatic
-citation extraction from the full texts of the Zeitschrift für Rechtssoziologie, the Journal of Law and Society, and a 
-collection of legal sociology textbooks between 1960 and 1989. It is to be expected that the data from the citation 
-extraction will be partially incorrect and incomplete. This is due to the shortcomings of the automated extraction 
-at the time of the research. However, these errors should be evenly distributed; results that do not concern individual 
-values but express larger trends should be relatively reliable.
+The data was obtained by a) querying the Web of Science and OpenAlex databases via the [German Competence Network for Bibliometrics](https://bibliometrie.info/en/) 
+and b) by computational citation extraction from the full texts of the Zeitschrift für Rechtssoziologie, the Journal 
+of Law and Society, and a collection of legal sociology textbooks between 1960 and 1989. 
+
+It is to be expected that the data from the citation extraction will be partially incorrect and incomplete. This is due 
+to the shortcomings of the automated extraction at the time of the research. However, these errors should be evenly 
+distributed; results that do not concern individual values but express larger trends should be relatively reliable.
 
 ## Requirements & Configuration
 
