@@ -26,7 +26,12 @@ values but express larger trends should be relatively reliable.
   data dumps which can be imported into the Neo4J Graph database v4.4.
 - The data obtained from the Web of Science cannot be shared due to legal reasons. 
 - The same applies to the fulltexts of the ZfRsoz and the JLS, which you will have to download and convert to text 
-  files yourself, if you want to run the corpus analyses. 
+  files yourself, if you want to run the corpus analyses.
+
+## Acknowledgements
+
+- Data from the Web of Science and from OpenAlex has been provided by the German Competence Network for Bibliometrics funded by the Federal Ministry of Education and Research (Grant: 16WIK2101A)
+- I would like to acknowledge the contribution of student assistants at the Max Planck Institute for Legal History and Legal Theory, in particular Lisa-Marie Esselmann, Daniel Fejzo, and Fabian Reinold, who created training data for the citation extraction model by annotating source texts.
 
 
  
