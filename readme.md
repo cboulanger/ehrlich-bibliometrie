@@ -1,5 +1,7 @@
 # Bibliometric Analyses on the Reception of Eugen Ehrlich in the German Sociology of Law in the 1970s and 1980s
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11190564.svg)](https://doi.org/10.5281/zenodo.11190564)
+
 This notebook contains the code to generate the graphs and figures used in the publication
 
 > Christian Boulanger, "Ehrlich-Rezeption in den 1970er- und 1980er-Jahren: eine digitale Spurensuche", 
